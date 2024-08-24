@@ -46,8 +46,10 @@ function createShaderProgram(gl, vertexSource, fragmentSource) {
 
 function main() {
   const canvas = document.getElementById("gl-canvas");
-  const gl = canvas.getContext("webgl");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
+  const gl = canvas.getContext("webgl");
   if (!gl) {
     alert("Unable to init WebGL. Your browser or computer may not support it.");
     return;
