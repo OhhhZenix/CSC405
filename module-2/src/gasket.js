@@ -16,10 +16,10 @@ void main() {
 }
 `;
 
-var canvas;
-var gl;
-var points = [];
-var numToSubDiv = 0;
+let canvas;
+let gl;
+let points = [];
+let numToSubDiv = 0;
 
 function compileShader(gl, source, type) {
   const shader = gl.createShader(type);
