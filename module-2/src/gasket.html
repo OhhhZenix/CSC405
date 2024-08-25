@@ -3,13 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="./gasket.css" />
     <title>My Gasket</title>
   </head>
-  <body>
-    <canvas id="gl-canvas" width="500px" height="500px"></canvas>
+  <body class="bg-slate-500 h-dvh flex flex-col">
+    <div class="flex flex-col p-2">
+      <div id="recursionDepthLabel">Recursion Depth: 0</div>
+      <div class="flex flex-wrap gap-2 items-center">
+        <span>0</span>
+        <input
+          id="recursionDepth"
+          type="range"
+          min="0"
+          max="6"
+          step="1"
+          value="0"
+        />
+        <span>6</span>
+      </div>
+    </div>
+    <canvas id="gl-canvas" class="w-full h-full"></canvas>
 
-    <script type="text/javascript" src="../../common/webgl-utils.js"></script>
     <script type="text/javascript" src="../../common/MV.js"></script>
     <script type="text/javascript" src="./gasket.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
