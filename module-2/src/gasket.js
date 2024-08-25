@@ -98,6 +98,9 @@ function main() {
     return;
   }
 
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
   createTriangles();
 
   const program = createShaderProgram(gl, vertexShader, fragmentShader);
