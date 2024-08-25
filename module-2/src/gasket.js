@@ -76,10 +76,14 @@ function divideTriangle(a, b, c, count) {
   }
 }
 
+function createTriangles() {
+  points = [];
+  divideTriangle(vertices[0], vertices[1], vertices[2], numToSubDiv);
+}
+
 function render() {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, points.length);
-  points = [];
   requestAnimationFrame(main);
 }
 
@@ -94,7 +98,7 @@ function main() {
     return;
   }
 
-  divideTriangle(vertices[0], vertices[1], vertices[2], numToSubDiv);
+  createTriangles();
 
   const program = createShaderProgram(gl, vertexShader, fragmentShader);
   if (!program) {
