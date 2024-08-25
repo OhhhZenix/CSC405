@@ -97,7 +97,7 @@ function main() {
 
   const program = createShaderProgram(gl, vertexShader, fragmentShader);
   if (!program) {
-    alert("Failed to compile shader!");
+    alert("Failed to create shader!");
     return;
   }
   gl.useProgram(program);
