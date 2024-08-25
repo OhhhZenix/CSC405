@@ -22,11 +22,6 @@ const vertices = [
   [1, -1],
 ];
 
-let canvas;
-let gl;
-let points = [];
-let numToSubDiv = 0;
-
 function compileShader(gl, source, type) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
@@ -56,13 +51,13 @@ function createShaderProgram(gl, vertexSource, fragmentSource) {
   return program;
 }
 
-function addTriangle(a, b, c) {
-  points.push(a, b, c);
+function addTriangle(triangles, a, b, c) {
+  triangles.push(a, b, c);
 }
 
-function divideTriangle(a, b, c, count) {
+function divideTriangle(triangles, a, b, c, count) {
   if (count == 0) {
-    addTriangle(a, b, c);
+    addTriangle(triangles, a, b, c);
   } else {
     var ab = mix(a, b, 0.5);
     var ac = mix(a, c, 0.5);
@@ -70,29 +65,31 @@ function divideTriangle(a, b, c, count) {
 
     count -= 1;
 
-    divideTriangle(a, ab, ac, count);
-    divideTriangle(c, ac, bc, count);
-    divideTriangle(b, bc, ab, count);
+    divideTriangle(triangles, a, ab, ac, count);
+    divideTriangle(triangles, c, ac, bc, count);
+    divideTriangle(triangles, b, bc, ab, count);
   }
 }
 
-function createTriangles() {
-  points = [];
-  divideTriangle(vertices[0], vertices[1], vertices[2], numToSubDiv);
+function createTriangles(numToSubDiv) {
+  const points = [];
+  divideTriangle(points, vertices[0], vertices[1], vertices[2], numToSubDiv);
+  return points;
 }
 
-function render() {
+function render(gl, points) {
   gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
   gl.drawArrays(gl.TRIANGLES, 0, points.length);
-  requestAnimationFrame(main);
+  requestAnimationFrame(() => render(gl, points));
 }
 
 function main() {
-  canvas = document.getElementById("gl-canvas");
+  const canvas = document.getElementById("gl-canvas");
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
 
-  gl = canvas.getContext("webgl");
+  const gl = canvas.getContext("webgl");
   if (!gl) {
     alert("Unable to init WebGL. Your browser or computer may not support it.");
     return;
@@ -100,8 +97,6 @@ function main() {
 
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
-  createTriangles();
 
   const program = createShaderProgram(gl, vertexShader, fragmentShader);
   if (!program) {
@@ -112,23 +107,24 @@ function main() {
 
   const arrayBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, 50000, gl.STATIC_DRAW);
-  gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(points));
 
   const aPosition = gl.getAttribLocation(program, "aPosition");
   gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(aPosition);
 
-  document.getElementById("recursionDepth").onchange = function (event) {
-    numToSubDiv = parseInt(event.target.value);
-    document.getElementById("recursionDepthLabel").innerHTML =
-      "Recursion Depth: " + numToSubDiv;
+  const slider = document.getElementById("recursionDepth");
+  slider.onchange = function (event) {
+    const numToSubDiv = parseInt(event.target.value);
+
+    const sliderLabel = document.getElementById("recursionDepthLabel");
+    sliderLabel.innerHTML = "Recursion Depth: " + numToSubDiv;
+
+    const triangles = createTriangles(numToSubDiv);
+    render(gl, triangles);
   };
 
-  gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
-  render();
+  const triangles = createTriangles(slider.value);
+  render(gl, triangles);
 }
 
 window.onload = main;
