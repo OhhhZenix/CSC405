@@ -27,6 +27,7 @@ function compileShader(gl, source, type) {
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     console.error("Shader compilation failed:", gl.getShaderInfoLog(shader));
+    alert("Failed to compile shader. Check console logs.");
     gl.deleteShader(shader);
     return null;
   }
@@ -42,6 +43,7 @@ function createShaderProgram(gl, vertexSource, fragmentSource) {
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
     console.error("Program linking failed:", gl.getProgramInfoLog(program));
+    alert("Failed to link shader program. Check console logs.");
     gl.deleteProgram(program);
     return null;
   }
