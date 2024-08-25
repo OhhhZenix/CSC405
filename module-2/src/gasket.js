@@ -79,8 +79,8 @@ function render() {
 
 function main() {
   canvas = document.getElementById("gl-canvas");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
 
   gl = canvas.getContext("webgl");
   if (!gl) {
