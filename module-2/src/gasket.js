@@ -16,6 +16,12 @@ void main() {
 }
 `;
 
+const vertices = [
+  [-1, -1],
+  [0, 1],
+  [1, -1],
+];
+
 let canvas;
 let gl;
 let points = [];
@@ -88,11 +94,6 @@ function main() {
     return;
   }
 
-  const vertices = [
-    [-1, -1],
-    [0, 1],
-    [1, -1],
-  ];
   divideTriangle(vertices[0], vertices[1], vertices[2], numToSubDiv);
 
   const program = createShaderProgram(gl, vertexShader, fragmentShader);
