@@ -7,52 +7,14 @@
   </head>
   <body class="w-dvw h-dvh">
     <div class="flex flex-col w-full h-full">
-      <div class="flex flex-wrap">
-        <div class="flex flex-wrap items-center p-2">
-          <div class="pr-2">Color Picker</div>
-          <div class="flex flex-col items-center text-center">
-            <div id="color-r-text" class="text-white bg-red-600 w-full">
-              R: 255
-            </div>
-            <input
-              id="color-r"
-              type="range"
-              min="0"
-              max="255"
-              step="1"
-              value="255"
-              class="w-[90%]"
-            />
-          </div>
-          <div class="flex flex-col items-center text-center">
-            <div id="color-g-text" class="text-white bg-green-600 w-full">
-              G: 255
-            </div>
-            <input
-              id="color-g"
-              type="range"
-              min="0"
-              max="255"
-              step="1"
-              value="255"
-              class="w-[90%]"
-            />
-          </div>
-          <div class="flex flex-col items-center text-center">
-            <div id="color-b-text" class="text-white bg-blue-600 w-full">
-              B: 255
-            </div>
-            <input
-              id="color-b"
-              type="range"
-              min="0"
-              max="255"
-              step="1"
-              value="255"
-              class="w-[90%]"
-            />
-          </div>
-        </div>
+      <div class="flex flex-wrap bg-zinc-900 text-white items-center gap-2 p-2">
+        <div>Cube Color Picker:</div>
+        <input
+          type="color"
+          value="#ffffff"
+          id="cube-color"
+          class="rounded w-10 h-10"
+        />
         <div class="flex flex-col">
           <div class="underline">Get Started</div>
           <div>Drag the mouse around to rotate the cube.</div>
