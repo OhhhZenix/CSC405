@@ -1,4 +1,4 @@
-function createCanvas(canvasTag) {
+function initCanvas(canvasTag) {
   // Setup canvas
   const canvas = document.getElementById(canvasTag);
   if (!canvas) {
