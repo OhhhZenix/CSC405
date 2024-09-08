@@ -120,6 +120,7 @@ function main() {
     -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0,
   ];
 
+  // Create and bind vertex buffer
   const vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -140,6 +141,7 @@ function main() {
     21, 20, 22, 22, 20, 23,
   ];
 
+  // Create and bind index buffer
   const ibo = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
   gl.bufferData(
@@ -148,21 +150,26 @@ function main() {
     gl.STATIC_DRAW,
   );
 
+  // Get attribute location and enable vertex attribute array
   const positionLocation = gl.getAttribLocation(program, "aPosition");
   gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, gl.FALSE, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
 
+  // Get uniform locations for MVP matrices
   const modelLocation = gl.getUniformLocation(program, "uModel");
   const viewLocation = gl.getUniformLocation(program, "uView");
   const projectionLocation = gl.getUniformLocation(program, "uProjection");
 
+  // Create model matrix
   const modelMatrix = mat4.create();
+  // Create view matrix with a camera looking at the origin from a distance
   const viewMatrix = mat4.lookAt(
     mat4.create(),
     vec3.set(vec3.create(), 0, 0, -5),
     vec3.zero(vec3.create()),
     vec3.set(vec3.create(), 0, 1, 0),
   );
+  // Create projection matrix with a perspective view
   const projectionMatrix = mat4.perspective(
     mat4.create(),
     toRadian(45),
@@ -171,26 +178,31 @@ function main() {
     1000.0,
   );
 
+  // Set uniform MVP matrices in shader
   gl.uniformMatrix4fv(modelLocation, gl.FALSE, modelMatrix);
   gl.uniformMatrix4fv(viewLocation, gl.FALSE, viewMatrix);
   gl.uniformMatrix4fv(projectionLocation, gl.FALSE, projectionMatrix);
 
+  // Initialize rotation variables
   let mouseDown = false;
   let lastX = 0;
   let lastY = 0;
   let angleX = 0;
   let angleY = 0;
 
+  // Handle mouse down event for rotation
   canvas.addEventListener("mousedown", (event) => {
     mouseDown = true;
     lastX = event.clientX;
     lastY = event.clientY;
   });
 
+  // Handle mouse up event to stop rotation
   canvas.addEventListener("mouseup", () => {
     mouseDown = false;
   });
 
+  // Handle mouse move event to update rotation angles
   canvas.addEventListener("mousemove", (event) => {
     if (mouseDown) {
       const deltaX = event.clientX - lastX;
@@ -204,6 +216,7 @@ function main() {
     }
   });
 
+  // Initialize rotation matrices
   let rotationX = mat4.create();
   let rotationY = mat4.create();
 
