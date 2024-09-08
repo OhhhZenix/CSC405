@@ -175,15 +175,44 @@ function main() {
   gl.uniformMatrix4fv(viewLocation, gl.FALSE, viewMatrix);
   gl.uniformMatrix4fv(projectionLocation, gl.FALSE, projectionMatrix);
 
-  let angle = 0;
+  let mouseDown = false;
+  let lastX = 0;
+  let lastY = 0;
+  let angleX = 0;
+  let angleY = 0;
+
+  canvas.addEventListener("mousedown", (event) => {
+    mouseDown = true;
+    lastX = event.clientX;
+    lastY = event.clientY;
+  });
+
+  canvas.addEventListener("mouseup", () => {
+    mouseDown = false;
+  });
+
+  canvas.addEventListener("mousemove", (event) => {
+    if (mouseDown) {
+      const deltaX = event.clientX - lastX;
+      const deltaY = event.clientY - lastY;
+
+      angleX += deltaY * 0.01;
+      angleY += deltaX * 0.01;
+
+      lastX = event.clientX;
+      lastY = event.clientY;
+    }
+  });
+
   let rotationX = mat4.create();
   let rotationY = mat4.create();
 
   // Renders onto the canvas using WebGL.
   function render() {
-    angle = (performance.now() / 1000 / 6) * 2 * Math.PI;
-    rotationX = rotateX(angle);
-    rotationY = rotateY(angle / 4);
+    // Update rotation
+    rotationX = rotateX(angleX);
+    rotationY = rotateY(angleY);
+    // Apply rotation
     mat4.mul(modelMatrix, rotationY, rotationX);
     gl.uniformMatrix4fv(modelLocation, gl.FALSE, modelMatrix);
 
