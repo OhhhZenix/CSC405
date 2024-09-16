@@ -30,7 +30,7 @@ void main() {
 }
 `;
 
-// Turns degrees into radians
+// Converts degrees to radians
 function toRadian(degree) {
   return degree * (Math.PI / 180);
 }
@@ -45,7 +45,7 @@ function main() {
   // Use the shader program created
   gl.useProgram(program);
 
-  // Vertices for a cube
+  // Define vertices for a cube
   const vertices = [
     // Top
     -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,
@@ -60,11 +60,14 @@ function main() {
     // Bottom
     -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0,
   ];
+  // Create a VBO
   const vbo = gl.createBuffer();
+  // Bind the VBO
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  // Fill the VBO
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-  // Indices for a cube
+  // Define indices for cube's faces
   const indices = [
     // Top
     0, 1, 2, 0, 2, 3,
@@ -79,22 +82,28 @@ function main() {
     // Bottom
     21, 20, 22, 22, 20, 23,
   ];
+  // Create an IBO
   const ibo = gl.createBuffer();
+  // Bind the IBO
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+  // Fill the IBO
   gl.bufferData(
     gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array(indices),
     gl.STATIC_DRAW,
   );
 
+  // Get attribute location and enable vertex attribute array
   const positionLocation = gl.getAttribLocation(program, "aPosition");
   gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
 
+  // Get uniform locations for MVP matrices
   const modelLocation = gl.getUniformLocation(program, "uModel");
   const viewLocation = gl.getUniformLocation(program, "uView");
   const projectionLocation = gl.getUniformLocation(program, "uProjection");
 
+  // Initial values for camera and projection
   let left = -10;
   let right = 10;
   let bottom = -6;
@@ -104,8 +113,10 @@ function main() {
   let radius = 1;
   let theta = 26;
   let phi = 18;
+  // Degree step for changing theta and phi
   const dr = toRadian(5);
 
+  // References to HTML elements for displaying parameter values
   const leftLabel = document.getElementById("left");
   const rightLabel = document.getElementById("right");
   const bottomLabel = document.getElementById("bottom");
@@ -116,6 +127,7 @@ function main() {
   const thetaLabel = document.getElementById("theta");
   const phiLabel = document.getElementById("phi");
 
+  // Function to update HTML labels with current values
   function updateLabels() {
     leftLabel.innerHTML = `Left: ${left.toFixed(2)}`;
     rightLabel.innerHTML = `Right: ${right.toFixed(2)}`;
@@ -131,6 +143,7 @@ function main() {
   // Set the initial values to labels
   updateLabels();
 
+  // Event handler for keyboard inputs
   window.onkeydown = (event) => {
     const keyCode = event.code;
     const isShift = event.shiftKey;
@@ -189,11 +202,15 @@ function main() {
       }
     }
 
+    // Update displayed values after key press
     updateLabels();
   };
 
+  // Function to update model, view, and projection matrices
   function updateMVP() {
+    // Create a model matrix
     const modelMatrix = mat4.create();
+    // Create a view matrix
     const eye = vec3.fromValues(
       radius * Math.cos(theta),
       radius * Math.sin(theta) * Math.cos(phi),
@@ -202,11 +219,15 @@ function main() {
     const center = vec3.fromValues(0, 0, 0);
     const up = vec3.fromValues(0, 1, 0);
     const viewMatrix = mat4.create();
+    // Create a projection matrix
     const projectionMatrix = mat4.create();
 
+    // Set view matrix
     mat4.lookAt(viewMatrix, eye, center, up);
+    // Set projection matrix
     mat4.ortho(projectionMatrix, left, right, bottom, top, near, far);
 
+    // Pass matrices to shader program
     gl.uniformMatrix4fv(modelLocation, false, modelMatrix);
     gl.uniformMatrix4fv(viewLocation, false, viewMatrix);
     gl.uniformMatrix4fv(projectionLocation, false, projectionMatrix);
@@ -214,10 +235,15 @@ function main() {
 
   // Renders onto the canvas using WebGL.
   function render() {
+    // Update matrices
     updateMVP();
+    // Clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // Draw the cube
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+    // Update viewport size
     gl.viewport(0, 0, canvas.width, canvas.height);
+    // Request the next frame
     requestAnimationFrame(render);
   }
 
@@ -225,4 +251,5 @@ function main() {
   requestAnimationFrame(render);
 }
 
+// Run the main function when the window is loaded
 window.onload = main;
