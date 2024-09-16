@@ -8,13 +8,13 @@ const vec3 = glMatrix.vec3;
 // The vertex shader is responsible for processing each vertex's data.
 const vertexSource = `# version 300 es
 
-in vec2 aPosition;
+in vec3 aPosition;
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
 
 void main() {
-  gl_Position = uProjection * uView * uModel * vec4(aPosition, 0.0, 1.0);
+  gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
 }
 `;
 
@@ -26,7 +26,7 @@ precision highp float;
 out vec4 fragColor;
 
 void main() {
-  fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+  fragColor = vec4(1.0, 1.0, 0.7, 1.0);
 }
 `;
 
@@ -45,12 +45,40 @@ function main() {
   // Use the shader program created
   gl.useProgram(program);
 
-  const vertices = [-0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5];
+  // Vertices for a cube
+  const vertices = [
+    // Top
+    -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0,
+    // Left
+    -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0,
+    // Right
+    1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0,
+    // Front
+    1.0, 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0,
+    // Back
+    1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0,
+    // Bottom
+    -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0,
+  ];
   const vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-  const indices = [0, 1, 2, 2, 3, 0];
+  // Indices for a cube
+  const indices = [
+    // Top
+    0, 1, 2, 0, 2, 3,
+    // Left
+    5, 4, 6, 6, 4, 7,
+    // Right
+    8, 9, 10, 8, 10, 11,
+    // Front
+    13, 12, 14, 15, 14, 12,
+    // Back
+    16, 17, 18, 16, 18, 19,
+    // Bottom
+    21, 20, 22, 22, 20, 23,
+  ];
   const ibo = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
   gl.bufferData(
@@ -60,22 +88,22 @@ function main() {
   );
 
   const positionLocation = gl.getAttribLocation(program, "aPosition");
-  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+  gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
 
   const modelLocation = gl.getUniformLocation(program, "uModel");
   const viewLocation = gl.getUniformLocation(program, "uView");
   const projectionLocation = gl.getUniformLocation(program, "uProjection");
 
-  let left = -1;
-  let right = 1;
-  let bottom = -1;
-  let top = 1;
+  let left = -10;
+  let right = 10;
+  let bottom = -6;
+  let top = 6;
   let near = 0.1;
   let far = 3;
   let radius = 1;
-  let theta = 0;
-  let phi = 0;
+  let theta = 26;
+  let phi = 18;
   const dr = toRadian(5);
 
   window.onkeydown = (event) => {
@@ -140,9 +168,9 @@ function main() {
   function updateMVP() {
     const modelMatrix = mat4.create();
     const eye = vec3.fromValues(
+      radius * Math.cos(theta),
       radius * Math.sin(theta) * Math.cos(phi),
-      radius * Math.sin(phi),
-      radius * Math.cos(theta) * Math.cos(phi),
+      radius * Math.sin(theta) * Math.sin(phi),
     );
     const center = vec3.fromValues(0, 0, 0);
     const up = vec3.fromValues(0, 1, 0);
@@ -157,14 +185,16 @@ function main() {
     gl.uniformMatrix4fv(projectionLocation, false, projectionMatrix);
   }
 
+  // Renders onto the canvas using WebGL.
   function render() {
     updateMVP();
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-    gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+    gl.viewport(0, 0, canvas.width, canvas.height);
     requestAnimationFrame(render);
   }
 
+  // Run render
   requestAnimationFrame(render);
 }
 
