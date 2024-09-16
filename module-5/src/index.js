@@ -135,8 +135,6 @@ function main() {
         phi += dr;
       }
     }
-
-    console.log(left, right, bottom, top, near, far, radius, theta, phi);
   };
 
   const modelMatrix = mat4.create();
