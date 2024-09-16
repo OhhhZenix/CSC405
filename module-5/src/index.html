@@ -5,8 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Viewing Functions</title>
   </head>
-  <body class="w-dvw h-dvh">
-    <canvas id="gl-canvas" class="w-full h-full"></canvas>
+  <body class="w-dvw h-dvh text-white">
+    <div class="flex flex-col w-full h-full">
+      <div class="w-full bg-zinc-900 flex flex-col">
+        <div class="pt-2 px-2">
+          <span class="underline font-bold">Tips:</span>
+          <span class="text-sm">
+            Use 'x' to interact with left and right values. Use 'y' to interact
+            with bottom and top values. Use 'z' to interact with near and far
+            values. Use 'r' to interact with radius value. Use 'o' to interact
+            with theta value. Use 'p' to interact with phi value. Use 'shift'
+            plus the other keys to go in the opposite direaction of the values.
+          </span>
+        </div>
+        <div class="flex flex-wrap p-2 gap-2">
+          <div class="bg-zinc-800 p-2 rounded-xl" id="left">Left</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="right">Right</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="bottom">Bottom</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="top">Top</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="near">Near</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="far">Far</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="radius">Radius</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="theta">Theta</div>
+          <div class="bg-zinc-800 p-2 rounded-xl" id="phi">Phi</div>
+        </div>
+      </div>
+      <canvas id="gl-canvas" class="w-full h-full"></canvas>
+    </div>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/3.4.2/gl-matrix-min.js"></script>
