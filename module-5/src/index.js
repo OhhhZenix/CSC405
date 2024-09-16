@@ -45,18 +45,12 @@ function main() {
   // Use the shader program created
   gl.useProgram(program);
 
-  // Vertices needed to form a triangle
-  const vertices = [-1.0, -1.0, 1.0, -1.0, 0.0, 1.0];
-
-  // Create and bind vertex buffer
+  const vertices = [-0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5];
   const vbo = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-  // Indices needed to create a triangle from vertices
-  const indices = [0, 1, 2];
-
-  // Create and bind index buffer
+  const indices = [0, 1, 2, 2, 3, 0];
   const ibo = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
   gl.bufferData(
@@ -65,38 +59,13 @@ function main() {
     gl.STATIC_DRAW,
   );
 
-  // Get attribute location and enable vertex attribute array
   const positionLocation = gl.getAttribLocation(program, "aPosition");
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, gl.FALSE, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
 
-  // Get uniform locations for MVP matrices
   const modelLocation = gl.getUniformLocation(program, "uModel");
   const viewLocation = gl.getUniformLocation(program, "uView");
   const projectionLocation = gl.getUniformLocation(program, "uProjection");
-
-  // Create model matrix
-  const modelMatrix = mat4.create();
-  // Create view matrix with a camera looking at the origin from a distance
-  const viewMatrix = mat4.lookAt(
-    mat4.create(),
-    vec3.set(vec3.create(), 0, 0, -5),
-    vec3.zero(vec3.create()),
-    vec3.set(vec3.create(), 0, 1, 0),
-  );
-  // Create projection matrix with a perspective view
-  const projectionMatrix = mat4.perspective(
-    mat4.create(),
-    toRadian(45),
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000.0,
-  );
-
-  // Set uniform MVP matrices in shader
-  gl.uniformMatrix4fv(modelLocation, gl.FALSE, modelMatrix);
-  gl.uniformMatrix4fv(viewLocation, gl.FALSE, viewMatrix);
-  gl.uniformMatrix4fv(projectionLocation, gl.FALSE, projectionMatrix);
 
   let left = -1;
   let right = 1;
@@ -112,7 +81,7 @@ function main() {
   window.onkeydown = (event) => {
     const keyCode = event.code;
     const isShift = event.shiftKey;
-    console.log(`Key pressed: ${keyCode}, Shift pressed: ${isShift}`); // Debugging line
+    console.log(`Key pressed: ${keyCode}, Shift pressed: ${isShift}`);
 
     if (keyCode === "KeyX") {
       if (isShift) {
@@ -167,26 +136,52 @@ function main() {
         phi += dr;
       }
     }
+
+    console.log(left, right, bottom, top, near, far, radius, theta, phi);
   };
 
-  // Renders onto the canvas using WebGL.
+  const modelMatrix = mat4.create();
+  const eye = vec3.fromValues(
+    radius * Math.cos(theta),
+    radius * Math.cos(theta),
+    radius * Math.sin(theta) * Math.sin(phi),
+  );
+  const center = vec3.fromValues(0, 0, 0);
+  const up = vec3.fromValues(0, 1, 0);
+  const viewMatrix = mat4.lookAt(mat4.create(), eye, center, up);
+  const projectionMatrix = mat4.ortho(
+    mat4.create(),
+    left,
+    right,
+    bottom,
+    top,
+    near,
+    far,
+  );
+
+  gl.uniformMatrix4fv(modelLocation, gl.FALSE, modelMatrix);
+  gl.uniformMatrix4fv(viewLocation, gl.FALSE, viewMatrix);
+  gl.uniformMatrix4fv(projectionLocation, gl.FALSE, projectionMatrix);
+
   function render() {
-    console.log(left, right, bottom, top, near, far, radius, theta, phi);
+    vec3.set(
+      eye,
+      radius * Math.cos(theta),
+      radius * Math.cos(theta),
+      radius * Math.sin(theta) * Math.sin(phi),
+    );
+    mat4.lookAt(viewMatrix, eye, center, up);
+    mat4.ortho(projectionMatrix, left, right, bottom, top, near, far);
+    gl.uniformMatrix4fv(viewLocation, gl.FALSE, viewMatrix);
+    gl.uniformMatrix4fv(projectionLocation, gl.FALSE, projectionMatrix);
 
-    // Apply rotation
-    gl.uniformMatrix4fv(modelLocation, gl.FALSE, modelMatrix);
-
-    // Clear the canvas.
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    // Draw cube
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
-    // Re-render on the next frame.
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
     requestAnimationFrame(render);
   }
 
-  // Run render
   requestAnimationFrame(render);
 }
 
