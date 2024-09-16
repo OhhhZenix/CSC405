@@ -81,7 +81,6 @@ function main() {
   window.onkeydown = (event) => {
     const keyCode = event.code;
     const isShift = event.shiftKey;
-    console.log(`Key pressed: ${keyCode}, Shift pressed: ${isShift}`);
 
     if (keyCode === "KeyX") {
       if (isShift) {
