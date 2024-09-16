@@ -106,6 +106,31 @@ function main() {
   let phi = 18;
   const dr = toRadian(5);
 
+  const leftLabel = document.getElementById("left");
+  const rightLabel = document.getElementById("right");
+  const bottomLabel = document.getElementById("bottom");
+  const topLabel = document.getElementById("top");
+  const nearLabel = document.getElementById("near");
+  const farLabel = document.getElementById("far");
+  const radiusLabel = document.getElementById("radius");
+  const thetaLabel = document.getElementById("theta");
+  const phiLabel = document.getElementById("phi");
+
+  function updateLabels() {
+    leftLabel.innerHTML = `Left: ${left.toFixed(2)}`;
+    rightLabel.innerHTML = `Right: ${right.toFixed(2)}`;
+    bottomLabel.innerHTML = `Bottom: ${bottom.toFixed(2)}`;
+    topLabel.innerHTML = `Top: ${top.toFixed(2)}`;
+    nearLabel.innerHTML = `Near: ${near.toFixed(2)}`;
+    farLabel.innerHTML = `Far: ${far.toFixed(2)}`;
+    radiusLabel.innerHTML = `Radius: ${radius.toFixed(2)}`;
+    thetaLabel.innerHTML = `Theta: ${theta.toFixed(2)}`;
+    phiLabel.innerHTML = `Phi: ${phi.toFixed(2)}`;
+  }
+
+  // Set the initial values to labels
+  updateLabels();
+
   window.onkeydown = (event) => {
     const keyCode = event.code;
     const isShift = event.shiftKey;
@@ -163,6 +188,8 @@ function main() {
         phi += dr;
       }
     }
+
+    updateLabels();
   };
 
   function updateMVP() {
