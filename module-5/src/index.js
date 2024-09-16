@@ -160,8 +160,8 @@ function main() {
   function render() {
     updateMVP();
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+    gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
     requestAnimationFrame(render);
   }
 
