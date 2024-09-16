@@ -1,5 +1,5 @@
 # Module 5
-A simple WebGL program that demonstrates different viewing functions.
+A simple WebGL program that demonstrates an interactive viewer using an orthographic projection of a cube.
 
 ## Usage
 1. Ensure you are in the correct directory of the sub-project.
