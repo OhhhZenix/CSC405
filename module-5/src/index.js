@@ -60,7 +60,7 @@ function main() {
   );
 
   const positionLocation = gl.getAttribLocation(program, "aPosition");
-  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, gl.FALSE, 0, 0);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(positionLocation);
 
   const modelLocation = gl.getUniformLocation(program, "uModel");
@@ -137,45 +137,31 @@ function main() {
     }
   };
 
-  const modelMatrix = mat4.create();
-  const eye = vec3.fromValues(
-    radius * Math.cos(theta),
-    radius * Math.cos(theta),
-    radius * Math.sin(theta) * Math.sin(phi),
-  );
-  const center = vec3.fromValues(0, 0, 0);
-  const up = vec3.fromValues(0, 1, 0);
-  const viewMatrix = mat4.lookAt(mat4.create(), eye, center, up);
-  const projectionMatrix = mat4.ortho(
-    mat4.create(),
-    left,
-    right,
-    bottom,
-    top,
-    near,
-    far,
-  );
-
-  gl.uniformMatrix4fv(modelLocation, gl.FALSE, modelMatrix);
-  gl.uniformMatrix4fv(viewLocation, gl.FALSE, viewMatrix);
-  gl.uniformMatrix4fv(projectionLocation, gl.FALSE, projectionMatrix);
-
-  function render() {
-    vec3.set(
-      eye,
-      radius * Math.cos(theta),
-      radius * Math.cos(theta),
-      radius * Math.sin(theta) * Math.sin(phi),
+  function updateMVP() {
+    const modelMatrix = mat4.create();
+    const eye = vec3.fromValues(
+      radius * Math.sin(theta) * Math.cos(phi),
+      radius * Math.sin(phi),
+      radius * Math.cos(theta) * Math.cos(phi),
     );
+    const center = vec3.fromValues(0, 0, 0);
+    const up = vec3.fromValues(0, 1, 0);
+    const viewMatrix = mat4.create();
+    const projectionMatrix = mat4.create();
+
     mat4.lookAt(viewMatrix, eye, center, up);
     mat4.ortho(projectionMatrix, left, right, bottom, top, near, far);
-    gl.uniformMatrix4fv(viewLocation, gl.FALSE, viewMatrix);
-    gl.uniformMatrix4fv(projectionLocation, gl.FALSE, projectionMatrix);
 
-    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+    gl.uniformMatrix4fv(modelLocation, false, modelMatrix);
+    gl.uniformMatrix4fv(viewLocation, false, viewMatrix);
+    gl.uniformMatrix4fv(projectionLocation, false, projectionMatrix);
+  }
 
+  function render() {
+    updateMVP();
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     requestAnimationFrame(render);
   }
 
