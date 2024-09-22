@@ -29,6 +29,8 @@ void main() {
 
 // Array to hold vertex data
 let vertices = [];
+
+// Tracks the length of the vertices
 let index = 0;
 
 // Resets sphere data
