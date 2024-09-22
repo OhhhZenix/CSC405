@@ -1,5 +1,5 @@
 # Module 6
-A simple WebGL program that.
+A simple WebGL program that demonstrates an interactive, approximated, and recursively subdivided sphere.
 
 ## Usage
 1. Ensure you are in the correct directory of the sub-project.
