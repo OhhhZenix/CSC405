@@ -29,10 +29,12 @@ void main() {
 
 // Array to hold vertex data
 let vertices = [];
+let index = 0;
 
-// Returns the number of vertices by dividing the total length by 4 (4 components per vertex)
-function verticesLength() {
-  return vertices.length / 4;
+// Resets sphere data
+function resetData() {
+  vertices = [];
+  index = 0;
 }
 
 // Push three vertices (a triangle) into the vertices array
@@ -40,6 +42,7 @@ function triangle(a, b, c) {
   vertices.push(...a);
   vertices.push(...b);
   vertices.push(...c);
+  index += 3;
 }
 
 // Recursively divides a triangle into smaller triangles
@@ -115,8 +118,6 @@ function main() {
   const smoothnessLabelUi = document.getElementById("smoothnessLabel");
   // Display current smoothness
   smoothnessLabelUi.innerHTML = smoothnessUi.value;
-  // Reset vertices array
-  vertices = [];
   // Generate initial sphere data
   tetrahedron(smoothnessUi.value);
 
@@ -130,8 +131,8 @@ function main() {
     const value = event.target.value;
     // Update ui label
     smoothnessLabelUi.innerHTML = value;
-    // Reset vertices array
-    vertices = [];
+    // Reset data
+    resetData();
     // Generate new sphere data
     tetrahedron(value);
     // Rebind the buffer
@@ -223,11 +224,11 @@ function main() {
 
     // Bind sphere color and draw the sphere
     gl.uniform3fv(colorLocation, sphereColor);
-    gl.drawArrays(gl.TRIANGLES, 0, verticesLength());
+    gl.drawArrays(gl.TRIANGLES, 0, index);
 
     // Bind outline color and draw the outline
     gl.uniform3fv(colorLocation, outlineColor);
-    for (let i = 0; i < verticesLength(); i += 3) {
+    for (let i = 0; i < index; i += 3) {
       // Draw outline of each triangle
       gl.drawArrays(gl.LINE_LOOP, i, 3);
     }
