@@ -7,14 +7,56 @@
   </head>
   <body class="w-dvw h-dvh bg-zinc-900 text-white">
     <div class="flex flex-col w-full h-full">
-      <div>Helper</div>
+      <div class="flex flex-wrap gap-2 p-2">
+        <div class="flex flex-wrap items-center gap-1">
+          <div>Sphere Color:</div>
+          <input
+            type="color"
+            value="#ffffff"
+            id="sphere-color"
+            class="rounded w-10 h-10"
+          />
+        </div>
+        <div class="flex flex-wrap items-center gap-1">
+          <div>Outline Color:</div>
+          <input
+            type="color"
+            value="#ff0000"
+            id="outline-color"
+            class="rounded w-10 h-10"
+          />
+        </div>
+        <div class="flex flex-col">
+          <div class="flex flex-wrap gap-1 items-center">
+            <div>Smoothness:</div>
+            <div id="smoothnessLabel">0</div>
+          </div>
+          <div class="flex flex-wrap gap-2 items-center">
+            <span>0</span>
+            <input
+              id="smoothness"
+              type="range"
+              min="0"
+              max="8"
+              step="1"
+              value="0"
+            />
+            <span>8</span>
+          </div>
+        </div>
+        <div>
+          <span class="underline">Get Started:</span> Drag the mouse around to
+          rotate the sphere.
+        </div>
+      </div>
       <canvas id="gl-canvas" class="w-full h-full"></canvas>
     </div>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/3.4.2/gl-matrix-min.js"></script>
+    <script src="../../common/MV.js"></script>
     <script src="../../common/webgl.js"></script>
     <script src="../../common/shaders.js"></script>
+    <script src="../../common/color.js"></script>
     <script src="./index.js"></script>
   </body>
 </html>
