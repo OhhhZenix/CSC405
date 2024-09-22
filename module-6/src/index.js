@@ -240,4 +240,5 @@ function main() {
   requestAnimationFrame(render);
 }
 
+// Starts the application
 window.onload = main;
