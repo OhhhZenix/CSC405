@@ -3,7 +3,10 @@
 // Vertex Shader Source Code
 const vertexSource = `# version 300 es
 
+in vec4 aPosition;
+
 void main() {
+  gl_Position = aPosition;
 }
 `;
 
@@ -11,7 +14,11 @@ void main() {
 const fragmentSource = `# version 300 es
 precision highp float;
 
+out vec4 fragColor;
+
 void main() {
+  fragColor = vec4(result, 1.0);
+}
 `;
 
 function main() {
