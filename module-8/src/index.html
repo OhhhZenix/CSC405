@@ -7,15 +7,79 @@
   </head>
   <body class="w-dvw h-dvh bg-zinc-900 text-white">
     <div class="flex flex-col w-full h-full">
-      <div>
-        <div>Hell World</div>
+      <div class="flex flex-wrap gap-2 p-2">
+        <div class="flex flex-col gap-2 p-2 bg-zinc-800 rounded">
+          <div class="text-center underline">Triangle 1</div>
+          <div class="flex flex-wrap items-center gap-1">
+            <div>Color:</div>
+            <input
+              type="color"
+              value="#FF0000"
+              id="triangle-1-color"
+              class="rounded w-10 h-10"
+            />
+          </div>
+          <div class="flex flex-wrap items-center gap-1">
+            <div>Depth:</div>
+            <input
+              type="number"
+              value="1"
+              id="triangle-1-depth"
+              class="rounded text-black text-center w-16 h-8"
+            />
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 p-2 bg-zinc-800 rounded">
+          <div class="text-center underline">Triangle 2</div>
+          <div class="flex flex-wrap items-center gap-1">
+            <div>Color:</div>
+            <input
+              type="color"
+              value="#00FF00"
+              id="triangle-2-color"
+              class="rounded w-10 h-10"
+            />
+          </div>
+          <div class="flex flex-wrap items-center gap-1">
+            <div>Depth:</div>
+            <input
+              type="number"
+              value="2"
+              id="triangle-2-depth"
+              class="rounded text-black text-center w-16 h-8"
+            />
+          </div>
+        </div>
+        <div class="flex flex-col gap-2 p-2 bg-zinc-800 rounded">
+          <div class="text-center underline">Triangle 3</div>
+          <div class="flex flex-wrap items-center gap-1">
+            <div>Color:</div>
+            <input
+              type="color"
+              value="#0000FF"
+              id="triangle-3-color"
+              class="rounded w-10 h-10"
+            />
+          </div>
+          <div class="flex flex-wrap items-center gap-1">
+            <div>Depth:</div>
+            <input
+              type="number"
+              value="3"
+              id="triangle-3-depth"
+              class="rounded text-black text-center w-16 h-8"
+            />
+          </div>
+        </div>
       </div>
       <canvas id="gl-canvas" class="w-full h-full"></canvas>
     </div>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../common/MV.js"></script>
     <script src="../../common/webgl.js"></script>
     <script src="../../common/shaders.js"></script>
+    <script src="../../common/color.js"></script>
     <script src="./index.js"></script>
   </body>
 </html>
