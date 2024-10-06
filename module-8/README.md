@@ -1,5 +1,5 @@
 # Module 8
-A simple WebGL program that.
+A simple WebGL program that demonstrates hidden surface removal using the painter's algorithm.
 
 ## Usage
 1. Ensure you are in the correct directory of the sub-project.
