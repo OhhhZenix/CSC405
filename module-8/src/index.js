@@ -30,6 +30,13 @@ void main() {
 }
 `;
 
+/**
+ * Creates a triangle given its position, color, and scale.
+ * @param {Array} position - The x and y coordinates for the triangle's center.
+ * @param {Array} color - The RGB color values for the triangle.
+ * @param {number} scale - The scale factor for the triangle size.
+ * @returns {Float32Array} - The vertex data for the triangle.
+ */
 function createTriangle(position, color, scale) {
   // Half the size of the triangle
   const halfSize = 0.5 * scale;
@@ -64,6 +71,15 @@ function createTriangle(position, color, scale) {
   return data;
 }
 
+/**
+ * Adds an object to the list of objects to be rendered.
+ * @param {Array} objects - The array of objects.
+ * @param {string} id - Unique identifier for the object.
+ * @param {Array} position - The position of the object.
+ * @param {Array} color - The color of the object.
+ * @param {number} depth - The depth of the object for sorting.
+ * @param {number} scale - The scale of the object.
+ */
 function addObject(objects, id, position, color, depth, scale) {
   objects.push({
     id: id,
@@ -74,10 +90,19 @@ function addObject(objects, id, position, color, depth, scale) {
   });
 }
 
+/**
+ * Sorts the objects based on their depth values.
+ * @param {Array} objects - The array of objects to sort.
+ */
 function sortObjects(objects) {
   objects.sort((a, b) => a.depth - b.depth);
 }
 
+/**
+ * Converts the list of objects into buffer data for rendering.
+ * @param {Array} objects - The array of objects.
+ * @returns {Array} - The buffer data containing vertex information.
+ */
 function toBufferData(objects) {
   let bufferData = [];
   objects.forEach((object) =>
@@ -88,20 +113,37 @@ function toBufferData(objects) {
   return bufferData;
 }
 
+/**
+ * Updates the color of an object identified by its id.
+ * @param {Array} objects - The array of objects.
+ * @param {string} id - The id of the object to update.
+ * @param {Array} color - The new color value.
+ */
 function setObjectColor(objects, id, color) {
   const object = objects.find((obj) => obj.id === id);
   if (object) {
+    // Update color
     object.color = color;
   }
 }
 
+/**
+ * Updates the depth of an object identified by its id.
+ * @param {Array} objects - The array of objects.
+ * @param {string} id - The id of the object to update.
+ * @param {number} depth - The new depth value.
+ */
 function setObjectDepth(objects, id, depth) {
   const object = objects.find((obj) => obj.id === id);
   if (object) {
+    // Update depth
     object.depth = depth;
   }
 }
 
+/**
+ * Main function to initialize and start the WebGL application.
+ */
 function main() {
   // Initialize the canvas
   const canvas = initCanvas("gl-canvas");
@@ -112,21 +154,28 @@ function main() {
   // Use the created program
   gl.useProgram(program);
 
+  // Object IDs
   const keys = ["triangle-1", "triangle-2", "triangle-3"];
+  // Triangle positions
   const trianglePositions = [
     [1, 0],
     [0, 0],
     [-1, 0],
   ];
+  // Color inputs
   const triangleColors = keys.map((value) =>
     document.getElementById(`${value}-color`),
   );
+  // Depth inputs
   const triangleDepths = keys.map((value) =>
     document.getElementById(`${value}-depth`),
   );
+  // Scale factors
   const triangleScales = [3.0, 2.5, 2.0];
+  // Array to hold objects
   let objects = [];
 
+  // Add objects
   keys.forEach((value, i) => {
     addObject(
       objects,
@@ -137,32 +186,50 @@ function main() {
       triangleScales[i],
     );
   });
+  // Sort objects by depth which is the painter's algo
   sortObjects(objects);
 
+  // Create buffer data from objects
   let vertexData = toBufferData(objects);
+  // Create vertex buffer
   const vbo = gl.createBuffer();
+  // Bind vertex buffer
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  // Upload data to GPU
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
 
+  // Size of position attribute
   const positionSize = 2;
+  // Size of color attribute
   const colorSize = 3;
+  // Total size of each vertex
   const totalSize = positionSize + colorSize;
+  // Stride for interleaved data
   const stride = totalSize * Float32Array.BYTES_PER_ELEMENT;
+  // Offset for position attribute
   const positionOffset = positionSize * Float32Array.BYTES_PER_ELEMENT;
 
+  // Function to set up vertex attribute pointers
   function setupAttribute(location, size, stride, offset) {
     gl.vertexAttribPointer(location, size, gl.FLOAT, false, stride, offset);
     gl.enableVertexAttribArray(location);
   }
 
+  // Get position attribute location
   const positionLocation = gl.getAttribLocation(program, "aPosition");
+  // Get color attribute location
   const colorLocation = gl.getAttribLocation(program, "aColor");
 
+  // Set up position attribute
   setupAttribute(positionLocation, positionSize, stride, 0);
+  // Set up color attribute
   setupAttribute(colorLocation, colorSize, stride, positionOffset);
 
+  // Function to update buffer data
   function updateBuffer() {
+    // Create new vertex data from changes
     vertexData = toBufferData(objects);
+    // Bind and upload new data to GPU
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.bufferData(
       gl.ARRAY_BUFFER,
@@ -171,25 +238,34 @@ function main() {
     );
   }
 
+  // Set up event listeners for color input changes
   keys.forEach((value, i) => {
     triangleColors[i].onchange = (event) => {
+      // Update color
       setObjectColor(objects, value, hexToFloatColor(event.target.value));
+      // Refresh buffer
       updateBuffer();
     };
   });
 
+  // Set up event listeners for depth input changes
   keys.forEach((value, i) => {
     triangleDepths[i].onchange = (event) => {
+      // Update depth
       setObjectDepth(objects, value, event.target.value);
+      // Resort objects by depth for painter's algo
       sortObjects(objects);
+      // Refresh buffer
       updateBuffer();
     };
   });
 
+  // Get uniform locations
   const modelLocation = gl.getUniformLocation(program, "uModel");
   const viewLocation = gl.getUniformLocation(program, "uView");
   const projectionLocation = gl.getUniformLocation(program, "uProjection");
 
+  // Create the MVP matrix
   let modelMatrix = mat4();
   const viewMatrix = lookAt(vec3(0, 0, -5), vec3(0, 0, 0), vec3(0, 1, 0));
   const projectionMatrix = perspective(
@@ -199,10 +275,12 @@ function main() {
     1000.0,
   );
 
+  // Set uniform matrices
   gl.uniformMatrix4fv(modelLocation, gl.FALSE, flatten(modelMatrix));
   gl.uniformMatrix4fv(viewLocation, gl.FALSE, flatten(viewMatrix));
   gl.uniformMatrix4fv(projectionLocation, gl.FALSE, flatten(projectionMatrix));
 
+  // Render loop
   function render() {
     // Set viewport
     gl.viewport(0, 0, canvas.width, canvas.height);
